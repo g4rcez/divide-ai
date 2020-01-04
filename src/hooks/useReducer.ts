@@ -1,28 +1,21 @@
-import { useState, useCallback } from "react";
+import { Dispatch, useReducer } from "react";
 
-const pipe = (...fns) => fns.reduce((f, g) => (...args) => g(f(...args)));
+type Action = { type: string; [key: string]: unknown };
+type UseReducer<State, Types> = [
+  State,
+  Dispatch<{ type: Types; [key: string]: unknown }>
+];
 
-type Reducer<T, S> = {
-  [P in keyof T]: (...args: any[]) => Partial<S>;
+type ReducerFunction<State> = (state: State, action: Action) => State;
+
+const createReducer = <State>(
+  reducer: { [key: string]: ReducerFunction<State> } & Object
+) => (state: State, action: Action): State => {
+  const key = action.type;
+  return reducer.hasOwnProperty(key) ? reducer[key](state, action) : state;
 };
 
-export default <S, F>(
-  initialState: S,
-  dispatches: Reducer<F, S>
-): { state: typeof initialState } & Reducer<F, S> => {
-  const [state, setState] = useState(initialState);
-  const typeBaseSetState = (state: unknown) => {
-    if (typeof state === "function") {
-      return setState(p => ({ ...p, ...state() }));
-    }
-    return setState(p => ({ ...p, ...(state as Object) }));
-  };
-  const actions: Reducer<F, S> = Object.entries(dispatches).reduce(
-    (acc, [name, fn]) => ({
-      ...acc,
-      [name]: pipe(useCallback(fn as any, []), typeBaseSetState) as Function
-    }),
-    {} as Reducer<F, S>
-  );
-  return { state, ...actions };
-};
+export default <S extends {}, T extends string>(
+  state: S,
+  functions: { [type in T]: (state: S, action: any) => S }
+): UseReducer<S, T> => useReducer(createReducer<S>(functions), state);
