@@ -12,6 +12,7 @@ import Person from "../person";
 import PersonItem from "../person-item";
 import ListRegisterItems from "./list-register-items";
 import NewItemForm from "./new-item.form";
+import NewPersonForm from "./new-person.form";
 
 const styles = StyleSheet.create({
   title: { color: colors.textOnLight, fontSize: 30 },
@@ -35,8 +36,8 @@ const styles = StyleSheet.create({
 });
 
 const initial = {
-  collapseItem: true as boolean,
-  collapsePerson: true as boolean,
+  collapseItem: true,
+  collapsePerson: true,
   items: [] as ConsumedItem[],
   personItem: new PersonItem(),
   persons: [] as Person[]
@@ -80,7 +81,7 @@ const Account = () => {
   return (
     <View style={styles.main}>
       <View style={styles.main}>
-        <Title style={styles.title}>Divide aí a conta</Title>
+        <Title style={styles.title}>Fecha a conta aí</Title>
         <View style={styles.newPerson}>
           <Button style={styles.fluxButtons} onPress={toggleNewItem}>
             {state.collapseItem ? "1. Novo Item" : "1. Acabou os itens"}
@@ -94,12 +95,8 @@ const Account = () => {
               ? "2. Dividir com mais um"
               : "2. Chega de gente"}
           </Button>
-          <Collapse collapsed={state.collapseItem}>
-            <NewItemForm onSubmit={submit} />
-          </Collapse>
-          <Collapse collapsed={state.collapsePerson}>
-            <Text>Adicionar gente</Text>
-          </Collapse>
+          <NewItemForm onSubmit={submit} />
+          <NewPersonForm visible />
         </View>
       </View>
       <ListRegisterItems items={state.items} remove={remove} />

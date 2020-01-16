@@ -32,13 +32,13 @@ type Props = {
 
 const ListRegisterItems = ({ items, remove }: Props) => {
   return (
-    <View style={styles.listItemsView}>
-      <View>
-        <Text>
-          <Icon name="eye" style={styles.eyeIcon} /> Esconder lista de itens
-        </Text>
-      </View>
-      <Collapsible collapsed={false}>
+    <Collapsible collapsed={items.length === 0}>
+      <View style={styles.listItemsView}>
+        <View>
+          <Text>
+            <Icon name="eye" style={styles.eyeIcon} /> Esconder lista de itens
+          </Text>
+        </View>
         <FlatList
           data={items}
           renderItem={({ item: x }: { item: ConsumedItem }) => (
@@ -52,8 +52,8 @@ const ListRegisterItems = ({ items, remove }: Props) => {
             </View>
           )}
         />
-      </Collapsible>
-    </View>
+      </View>
+    </Collapsible>
   );
 };
 

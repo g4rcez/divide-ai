@@ -1,22 +1,24 @@
-import React, { useContext } from "react";
-import { View } from "react-native";
 import { Text } from "native-base";
-import styled, { ThemeContext } from "styled-components/native";
+import React from "react";
+import styled from "styled-components/native";
+import colors from "../styles/colors";
 import theme from "../styles/theme";
 
 const TouchableHighlight = styled.TouchableHighlight.attrs(props => ({
   ...props,
+  full: false,
   underlayColor: theme(props, "primaryHighlight")
 }))`
-  padding: 10px;
-  border-radius: 8px;
-  background-color: ${props => theme(props, "primary")};
-  width: 100%;
-  min-width: 20%;
+  padding: 5px;
+  border-radius: 5px;
+  width: ${(props: any) => (props.full ? "100%" : "auto")};
+  background-color: ${props =>
+    theme(props, props.disabled ? "disabled" : "primary")};
 `;
 
 const Font = styled(Text)`
-  color: ${props => theme(props, "textOnDark")};
+  color: ${props =>
+    theme(props, props.disabled ? "disabledText" : "textOnDark")};
   font-family: "Roboto";
   font-size: 17px;
   font-weight: 700;
@@ -24,16 +26,31 @@ const Font = styled(Text)`
 `;
 
 type Props = {
-  onPress: () => void;
   children: React.ReactNode;
+  full?: boolean;
+  disabled?: boolean;
+  style?: any;
+  onPress: () => void;
 };
 
-const Button = ({ children, onPress }: Props) => (
-  <View>
-    <TouchableHighlight onPress={onPress}>
-      <Font>{children}</Font>
-    </TouchableHighlight>
-  </View>
+const voidFn = () => {};
+
+const Button = ({
+  children,
+  style = {},
+  onPress,
+  disabled,
+  full = false
+}: Props) => (
+  <TouchableHighlight
+    style={style}
+    underlayColor={colors.primaryHighlight}
+    disabled={disabled}
+    full={full}
+    onPress={disabled ? voidFn : onPress}
+  >
+    <Font disabled={disabled}>{children}</Font>
+  </TouchableHighlight>
 );
 
 export default Button;
